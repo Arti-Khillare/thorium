@@ -8,7 +8,11 @@ const userSchema = new mongoose.Schema( {
         unique: true,
         required: true
     },
-    emailId: String,
+    emailId: {
+        type: String,
+        unique: true,
+        required: true
+    },
     gender: {
         type: String,
         enum: ["male", "female", "LGBTQ"] //"falana" will give an error
@@ -26,6 +30,3 @@ const userSchema = new mongoose.Schema( {
 module.exports = mongoose.model('User', userSchema) //users
 
 
-
-// String, Number
-// Boolean, Object/json, array

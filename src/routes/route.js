@@ -1,22 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const CowinController= require("../controllers/cowinController")
+const AuthorContorller = require("../controllers/authorController")
+const BlogController = require("../controllers/blogController");
+const  Authenticate  = require("../middlewares/commonMiddlewares");
 
 
+router.post("/createAuthor", AuthorContorller.createAuthor)
 
-router.get("/test-me", function (req, res) {
-    res.send("My first ever api!")
-})
+router.post("/loginAuthor", AuthorContorller.loginAuthor)
 
+router.post("/createBlog" , Authenticate.Authenticate,  BlogController.createBlog)
 
-router.get("/cowin/states", CowinController.getStates)
-router.get("/cowin/districtsInState/:stateId", CowinController.getDistricts)
-router.get("/cowin/getByPin", CowinController.getByPin)
+router.get("/getBlog" , Authenticate.Authenticate,   BlogController.getBlog)
 
-router.post("/cowin/getOtp", CowinController.getOtp)
+router.put("/UpdateBlog/:authorId/:blogId" ,Authenticate.Authenticate,Authenticate.Authorise, BlogController.UpdateBlog)
 
-// WRITE A GET API TO GET THE LIST OF ALL THE "vaccination sessions by district id" for any given district id and for any given date
+router.delete("/deletedBlogById/:authorId/:blogId",Authenticate.Authenticate,Authenticate.Authorise,BlogController.deletedBlogById)
 
-
+router.delete("/deleteBlogs/:authorId/:blogId",Authenticate.Authenticate, Authenticate.Authorise, BlogController.deletedBlogsByParams)
 
 module.exports = router;

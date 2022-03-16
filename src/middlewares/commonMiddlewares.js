@@ -1,26 +1,38 @@
+const jwt = require("jsonwebtoken")
 
-const mid1= function ( req, res, next) {
-    req.falana= "hi there. i am adding something new to the req object"
-    console.log("Hi I am a middleware named Mid1")
-    next()
+let Authenticate = function (req, res, next) {
+    try {
+        let token = req.headers["x-api-key"];
+        if (!token) {
+            return res.status(400).send({ status: false, msg: "token must be present"}) ;
+        }
+        let decodedToken = jwt.verify(token, "functionup-thoriumBlogger");
+        if (!decodedToken) {
+            return res.status(401).send({ status: false, msg: "token is invalid" }) ;
+        }
+        next()
+    }
+    catch(err) {
+        res.status(500).send({msg:"error found", err}) 
+    }
 }
 
-const mid2= function ( req, res, next) {
-    console.log("Hi I am a middleware named Mid2")
-    next()
+const Authorise = function (req, res, next) {
+    try{
+         let token = req.headers["x-api-key"];
+         let decodedToken = jwt.verify(token, "functionup-thoriumBlogger");
+         let tobeUpdatedAuthorId = req.params.authorId;
+         let loggedInAuthorId = decodedToken.authorId;
+         if(loggedInAuthorId != tobeUpdatedAuthorId)
+         return res.status(400).send({status: false, msg : "You are not authorise to do this task"});
+         else
+         next()
+    }
+    catch(err) {
+        res.status(500).send({msg:"error found", err}) 
+    }
 }
 
-const mid3= function ( req, res, next) {
-    console.log("Hi I am a middleware named Mid3")
-    next()
-}
+module.exports.Authenticate = Authenticate
 
-const mid4= function ( req, res, next) {
-    console.log("Hi I am a middleware named Mid4")
-    next()
-}
-
-module.exports.mid1= mid1
-module.exports.mid2= mid2
-module.exports.mid3= mid3
-module.exports.mid4= mid4
+module.exports.Authorise = Authorise
